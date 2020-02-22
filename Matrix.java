@@ -1,7 +1,7 @@
 import java.util.Random;
 import java.lang.Math;
 import java.io.Serializable;
-class Matrix implements Serializable {
+public class Matrix implements Serializable {
     /**
      *
      */
