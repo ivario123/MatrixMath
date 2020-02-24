@@ -26,6 +26,38 @@ public class Matrix implements Serializable {
         }
     }
   }
+  //Function derivating anny given matrix
+  static public Matrix derive(Matrix A, int activ){
+    Matrix B = new Matrix(A.m,A.n);
+    switch(activ){
+      case 1:
+      B = dtanh(B);
+      break;
+      case 2:
+      B = dsin(B);
+      break;
+      case 3:
+      B = dcos(B);
+      break;
+      case 4:
+      B = dln(B);
+      break;
+      case 5:
+      B = dgaussian(B);
+      break;
+  }
+  return B;
+  }
+  //Function transposing anny given matrix
+  static public Matrix transpose(Matrix A){
+    Matrix O = new Matrix(A.n,A.m);
+    for(int i = 0; i < O.m; i++){
+      for(int j = 0; j < O.n; j++){
+        O.table[i][j]=A.table[j][i];
+      }
+    }
+    return O;
+  }
   //Function that adds a randum number to each number in the matrix
   static public Matrix rAdd(Matrix m){
     Random r = new Random();
@@ -38,6 +70,23 @@ public class Matrix implements Serializable {
   }
   //Fuction that multiplies to matricies together
   static public Matrix mMult(Matrix A, Matrix B,int activ) {
+    switch(activ){
+      case 1:
+      B = tanh(B);
+      break;
+      case 2:
+      B = sin(B);
+      break;
+      case 3:
+      B = cos(B);
+      break;
+      case 4:
+      B = ln(B);
+      break;
+      case 5:
+      B = gaussian(B);
+      break;
+  }
     Matrix o  = new Matrix(A.m,B.n);
     for(int i = 0; i < A.m; i++){
        for(int j = 0; j < B.n; j++){
@@ -46,23 +95,7 @@ public class Matrix implements Serializable {
         }
        }
     }
-    switch(activ){
-        case 1:
-        o = tanh(o);
-        break;
-        case 2:
-        o = sin(o);
-        break;
-        case 3:
-        o = cos(o);
-        break;
-        case 4:
-        o = ln(o);
-        break;
-        case 5:
-        o = gaussian(o);
-        break;
-    }
+    
     return o;
   }
   //Applies gaussian function to the matrix
@@ -205,4 +238,56 @@ public class Matrix implements Serializable {
     }
     return temp;
   }
+}
+public class Vector{
+    int dimenssion = 0;
+    float[] table;
+    public Vector(float[] table){
+        this.dimenssion = table.length;
+        this.table  = table;
+    }
+    public Vector(int l){
+        this.dimenssion = l;
+        table = new float[l];
+        for(int i = 0; i < l ; i++){
+            table[l] = 0;
+        }
+    }
+
+    public static Vector add(Vector A, Vector B){
+        if(A.dimenssion!=B.dimenssion)
+            return null;
+        Vector temp = new Vector(A.dimenssion);
+        for(int i = 0; i < A.dimenssion; i++){
+            temp.table[i] = A.table[i]+B.table[i];
+        }
+        return temp;
+    }
+
+    public static float scalarproduct(Vector A, Vector B){
+        if(A.dimenssion!=B.dimenssion)
+            return null;
+        float temp = 0;
+        for(int i = 0; i < A.dimenssion; i++){
+            temp = A.table[i]+B.table[i];
+        }
+        return temp;
+
+    }
+    public static Vector nMult(float n, Vector A){
+        Vector temp = new Vector(A.dimenssion);
+        for(int i = 0; i < A.dimenssion; i++){
+            temp.table[i] = A.table[i]*n;
+        }
+        return temp;
+    }
+    public static Vector project(Vector A,Vector B){
+        if(A.dimenssion!=B.dimenssion)
+            return null;
+        Vector temp = Vector.nMult((Vector.scalarproduct(A,B)/Math.sqrt(Vector.scalarproduct(A,B))),B);
+        return temp;
+    }
+    public static float len(Vector A)
+        return Math.sqrt(Vector.scalarproduct(A,A));
+
 }
