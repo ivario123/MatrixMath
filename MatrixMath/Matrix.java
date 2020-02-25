@@ -290,32 +290,48 @@ public class Matrix implements Serializable {
             for (int j = 0; j < n; j++) {
                 temp[j] = table[i][j];
             }
-            v[i] = new Vector(v);
+            v[i] = new Vector(temp);
         }
         return v;
     }
 
     //Function that returns an array of vectors
     public Vector[] colVector() {
-        Vector[] v = new Vector[mn;
+        Vector[] v = new Vector[n];
         for (int i = 0; i < n; i++) {
             float[] temp = new float[m];
             for (int j = 0; j < m; j++) {
                 temp[j] = table[j][i];
             }
-            v[i] = new Vector(v);
+            v[i] = new Vector(temp);
         }
         return v;
     }
-
+    static public Vector[] rearange(Matrix inp){
+        return inp.rowVector();
+    }
     //Function that solves a system of equations
-    static public Vector gauss(Matrix inp, Vector sol) {
-        return null;
+    static public Vector gaussElim(Matrix inp, Vector sol) {
+        Vector[] m = inp.rowVector();
+        if( m[0].table[0]==0)
+            m=Matrix.rearange(inp);
+        for(int i = 0; i < inp.n; i++)
+            for(int j = i+1; j <m.length; j++){
+                m[j] = Vector.add(Vector.nMult(-m[i].table[i],m[j]),Vector.nMult(m[j].table[i],m[i]));
+                sol.table[i] =-sol.table[i]*sol.table[j]+sol.table[j]*sol.table[i];
+            }
+        for(int i = inp.n-1; i > -1; i--){
+            for(int j = i+1; j <inp.m; j++){
+                m[j] = Vector.add(Vector.nMult(-m[i].table[i],m[j]),Vector.nMult(m[j].table[i],m[i]));
+                sol.table[i] =-sol.table[i]*sol.table[j]+sol.table[j]*sol.table[i];
+            }
+        }
+        return new Matrix(m);
     }
 }
 
 public class Vector {
-    int dimenssion = 0;
+    int dimenssion;
     float[] table;
 
     public Vector(float[] table) {
@@ -363,11 +379,11 @@ public class Vector {
     public static Vector project(Vector A, Vector B) {
         if (A.dimenssion != B.dimenssion)
             return null;
-        Vector temp = Vector.nMult((Vector.scalarproduct(A, B) / Math.sqrt(Vector.scalarproduct(A, B))), B);
-        return temp;
+        return Vector.nMult((Vector.scalarproduct(A, B) / Math.sqrt(Vector.scalarproduct(A, B))), B);;
     }
 
-    public static float len(Vector A)
-        return Math.sqrt(Vector.scalarproduct(A,A));
+    public static float len(Vector A) {
+        return Math.sqrt(Vector.scalarproduct(A, A));
+    }
 
 }
