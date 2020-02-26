@@ -1,5 +1,7 @@
 package MatrixMath;
 import MatrixMath.Vector;
+import javafx.util.Pair;
+
 import java.io.Serializable;
 import java.util.Random;
 
@@ -309,14 +311,29 @@ public class Matrix implements Serializable {
         }
         return v;
     }
-    static public Vector[] rearange(Matrix inp){
-        return inp.rowVector();
+    static public  Pair<Vector[],Vector> rearange(Matrix inp, Vector ans){
+        Vector temp = inp.rowVector()[0];
+        Vector[] m = inp.rowVector();
+        float tempans = ans.table[0];
+        for(int i = 1; i < m.length; i++){
+            if(m[i].table[0]!=0){
+                m[0] = m[i];
+                m[i] = temp;
+                ans.table[0] = ans.table[i];
+                ans.table[i] = tempans;
+
+            }
+        }
+        return new Pair<Vector[],Vector>(m,ans);
     }
     //Function that solves a system of equations
     static public Vector[] gaussElim(Matrix inp, Vector sol) {
         Vector[] m = inp.rowVector();
-        if( m[0].table[0]==0)
-            m=Matrix.rearange(inp);
+        if( m[0].table[0]==0) {
+            Pair<Vector[],Vector> k = Matrix.rearange(inp, sol);
+            m = k.getKey();
+            sol = k.getValue();
+        }
         for(int i = 0; i < inp.n; i++)
             for(int j = i+1; j <m.length; j++){
                 float uppermult = -m[j].table[i];
@@ -331,6 +348,11 @@ public class Matrix implements Serializable {
                 m[i] = Vector.add(Vector.nMult(lowermult,m[j]),Vector.nMult(uppermult,m[i]));
                 sol.table[i] =+sol.table[i]*uppermult+sol.table[j]*lowermult;
             }
+        }
+        for(int i = 0; i < inp.m; i++){
+            float div = m[i].table[i];
+            m[i].table[i]=m[i].table[i]/div;
+            sol.table[i] = sol.table[i]/div;
         }
         Matrix temp = Matrix.create(m,true);
         return new Vector[]{m[0],m[1],sol};
