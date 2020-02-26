@@ -327,7 +327,7 @@ public class Matrix implements Serializable {
         return new Pair<Vector[],Vector>(m,ans);
     }
     //Function that solves a system of equations
-    static public Vector[] gaussElim(Matrix inp, Vector sol) {
+    static public Pair<Matrix,Vector> gaussElim(Matrix inp, Vector sol) {
         Vector[] m = inp.rowVector();
         if( m[0].table[0]==0) {
             Pair<Vector[],Vector> k = Matrix.rearange(inp, sol);
@@ -355,6 +355,14 @@ public class Matrix implements Serializable {
             sol.table[i] = sol.table[i]/div;
         }
         Matrix temp = Matrix.create(m,true);
-        return new Vector[]{m[0],m[1],sol};
+        return new Pair<Matrix,Vector>(Matrix.create(m,true),sol);
+    }
+    static public Vector linreg(Matrix A, Vector ans){
+        Matrix AT = Matrix.transpose(A);
+        Matrix LH = Matrix.mMult(AT,A,0);
+        Matrix RH = Matrix.mMult(AT,Matrix.create(new Vector[]{ans},false),0);
+        Vector corr  = RH.colVector()[0];
+        return Matrix.gaussElim(LH,corr).getValue();
+
     }
 }
