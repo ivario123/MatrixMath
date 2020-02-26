@@ -1,7 +1,8 @@
+package MatrixMath;
 
 public class Vector {
-    int dimenssion;
-    float[] table;
+    public int dimenssion;
+    public float[] table;
 
     public Vector(float[] table) {
         this.dimenssion = table.length;
@@ -12,7 +13,7 @@ public class Vector {
         this.dimenssion = l;
         table = new float[l];
         for (int i = 0; i < l; i++) {
-            table[l] = 0;
+            table[i] = 0;
         }
     }
 
@@ -27,8 +28,6 @@ public class Vector {
     }
 
     public static float scalarproduct(Vector A, Vector B) {
-        if (A.dimenssion != B.dimenssion)
-            return null;
         float temp = 0;
         for (int i = 0; i < A.dimenssion; i++) {
             temp = A.table[i] + B.table[i];
@@ -48,11 +47,11 @@ public class Vector {
     public static Vector project(Vector A, Vector B) {
         if (A.dimenssion != B.dimenssion)
             return null;
-        return Vector.nMult((Vector.scalarproduct(A, B) / Math.sqrt(Vector.scalarproduct(A, B))), B);;
+        return Vector.nMult((float)(Vector.scalarproduct(A, B) / Math.sqrt(Vector.scalarproduct(A, B))), B);
     }
 
     public static float len(Vector A) {
-        return Math.sqrt(Vector.scalarproduct(A, A));
+        return (float)Math.sqrt(Vector.scalarproduct(A, A));
     }
 
 }

@@ -1,5 +1,5 @@
 package MatrixMath;
-
+import MatrixMath.Vector;
 import java.io.Serializable;
 import java.util.Random;
 
@@ -15,26 +15,28 @@ public class Matrix implements Serializable {
     // Column count of the matrix
     public int n;
 
-    public Matrix(Vector[] v, boolean rows) {
+    public static Matrix create(Vector[] v, boolean rows) {
+        Matrix m = new Matrix(1,1);
         if (rows) {
-            m = v.length;
-            n = v[0].dimenssion;
-            table = new float[m][n];
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
-                    table[i][j] = v[i].table[j];
+            m.m = v.length;
+            m.n = v[0].dimenssion;
+            m.table = new float[m.m][m.n];
+            for (int i = 0; i < m.m; i++) {
+                for (int j = 0; j < m.n; j++) {
+                    m.table[i][j] = v[i].table[j];
                 }
             }
         } else {
-            n = v.length;
-            m = v[0].dimenssion;
-            table = new float[m][n];
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < m; j++) {
-                    table[j][i] = v[i].table[j];
+            m.n = v.length;
+            m.m = v[0].dimenssion;
+            m.table = new float[m.m][m.n];
+            for (int i = 0; i < m.n; i++) {
+                for (int j = 0; j < m.m; j++) {
+                    m.table[j][i] = v[i].table[j];
                 }
             }
         }
+        return m;
     }
 
     //Constructor function for the Matrix class
@@ -311,21 +313,26 @@ public class Matrix implements Serializable {
         return inp.rowVector();
     }
     //Function that solves a system of equations
-    static public Vector gaussElim(Matrix inp, Vector sol) {
+    static public Vector[] gaussElim(Matrix inp, Vector sol) {
         Vector[] m = inp.rowVector();
         if( m[0].table[0]==0)
             m=Matrix.rearange(inp);
         for(int i = 0; i < inp.n; i++)
             for(int j = i+1; j <m.length; j++){
-                m[j] = Vector.add(Vector.nMult(-m[i].table[i],m[j]),Vector.nMult(m[j].table[i],m[i]));
-                sol.table[i] =-sol.table[i]*sol.table[j]+sol.table[j]*sol.table[i];
+                float uppermult = -m[j].table[i];
+                float lowermult = m[i].table[i];
+                m[j] = Vector.add(Vector.nMult(lowermult,m[j]),Vector.nMult(uppermult,m[i]));
+                sol.table[j] =sol.table[i]*uppermult+sol.table[j]*lowermult;
             }
         for(int i = inp.n-1; i > -1; i--){
             for(int j = i+1; j <inp.m; j++){
-                m[j] = Vector.add(Vector.nMult(-m[i].table[i],m[j]),Vector.nMult(m[j].table[i],m[i]));
-                sol.table[i] =-sol.table[i]*sol.table[j]+sol.table[j]*sol.table[i];
+                float uppermult = -m[j].table[j];
+                float lowermult = m[i].table[j];
+                m[i] = Vector.add(Vector.nMult(lowermult,m[j]),Vector.nMult(uppermult,m[i]));
+                sol.table[i] =+sol.table[i]*uppermult+sol.table[j]*lowermult;
             }
         }
-        return new Matrix(m);
+        Matrix temp = Matrix.create(m,true);
+        return new Vector[]{m[0],m[1],sol};
     }
 }
